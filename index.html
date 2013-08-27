@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width,minimum-scale=1.0,maximum-scale=1.0" />
+	<title>Facebook Gallery Plugin</title>
+	<meta name="description" content="">
+	
+	<!-- HTML5 shim, for IE6-8 support of HTML elements -->
+	<!--[if lt IE 9]>
+		<script src="//html5shim.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
+	
+	<style>
+	
+	    body{
+    	    text-align: center;
+    	    font-family: Helvetica, Arial, sans-serif;
+	    }
+	    
+	    a:link, a:hover{color:#1C94A3;text-decoration: none}
+	    a:hover, a:visited{color:#0078A4;text-decoration: none}
+	    
+	    #chosen-photo{
+    	    margin:30px 0;
+	    }
+	    
+	    .fb-gallery{
+    	    border:2px solid #CCC;
+    	    background-color: #F2F2F2;
+    	    font-size:30px;
+    	    padding:20px;
+    	    width:200px;
+	    }
+	    
+	    .fb-gallery:hover{
+	        color:#FFF;
+    	    background-color: #0078A4;
+	    }
+	    
+	    #jq-fbgallery-container{
+    	    text-align: left;
+	    }
+	
+	
+        /* Required for the Modal */
+	    #jq-fbgallery-container{
+    	    display: none;
+    
+            position: fixed;
+            top: 17%;
+            left: 50%;
+            
+            margin-left: -300px;
+            width: 600px;
+            
+            background-color: #EEE;
+            color: #333;
+            border: 1px solid black;
+            padding: 12px;
+	    }
+	    
+	    #jq-fbgallery-overlay { background-color: #000; }
+	    
+	    #jq-fbgallery-results-container-list{
+	        list-style: none;
+	        margin:0;
+	        padding:0;
+	    }
+	    
+	    #jq-fbgallery-results-container-list li{
+    	    float:left;
+    	    margin-right:15px;
+    	    margin-bottom:15px;
+    	    display:block;
+    	    width:150px;
+    	    height:150px;
+	    }
+	    
+	    #jq-fbgallery-results-container-list img{
+    	    border:1px solid #CCC;
+	    }
+	    
+	    #jq-fbgallery-container-close{
+    	    float:right;
+	    }
+	    
+	</style>
+	
+</head>
+ 
+<body>
+	
+	<div id="chosen-photo"></div>
+    <p><a href="#" class="fb-gallery">Choose a Photo</a></p>
+	
+	
+	
+	<!-- Required by Facebook -->
+	<div id="fb-root"></div>
+    <script>(function(d, s, id) {
+      var js, fjs = d.getElementsByTagName(s)[0];
+      if (d.getElementById(id)) return;
+      js = d.createElement(s); js.id = id;
+      js.src = "https://connect.facebook.net/en_US/all.js";
+      fjs.parentNode.insertBefore(js, fjs);
+    }(document, 'script', 'facebook-jssdk'));</script>
+	<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.js"></script>
+	<script src="/assets/js/lib/jquery.fbgallery.js"></script>
+	
+	<script>
+	    
+	    window.fbAsyncInit = function() {
+      
+            FB.init({
+                appId: "", 
+                status: true, 
+                cookie: true
+            });
+          
+        };
+	    
+	</script>
+	
+	<script>
+	    $(function(){
+            $(".fb-gallery").fbGallery({
+        	    onPhotoSelect: function(response){
+            	    $("#chosen-photo").html("<img src='" + response.source + "' width='600'>");
+        	    }
+    	    });
+	    });
+	</script>
+ 
+</body>
+ 
+</html>
