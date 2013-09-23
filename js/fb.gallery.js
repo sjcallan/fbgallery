@@ -4,7 +4,7 @@
     
         /* Setup Defaults */
         var settings = $.extend({
-            lang_header: "Browse Your Albums",
+            langHeader: "Browse Your Albums",
             facebookUserID: "",
             onPhotoSelect: function(){},
             onAlbumSelect: function(){}
@@ -69,7 +69,7 @@
         
         /* Load up the albums */
         var loadAlbums = function(){
-            $("#jq-fbgallery-container h1").html(settings.lang_header);
+            $("#jq-fbgallery-container h1").html(settings.langHeader);
             
             FB.api('/me/albums', function(response) {
                 $("#jq-fbgallery-results-container").html(""); 
@@ -130,7 +130,7 @@
         /* Launch the app */
         var launchModal = function(){
             /* Create a container */
-            $("body").prepend('<div id="jq-fbgallery-container"><a href="#" id="jq-fbgallery-container-close">&times;</a><h1>' + settings.lang_header + '</h1> <div id="jq-fbgallery-results-container"></div></div><div id="jq-fbgallery-overlay"></div>');
+            $("body").prepend('<div id="jq-fbgallery-container"><a href="#" id="jq-fbgallery-container-close">&times;</a><h1>' + settings.langHeader + '</h1> <div id="jq-fbgallery-results-container"></div></div><div id="jq-fbgallery-overlay"></div>');
             
             /* Set CSS on the above container */
             setCSS();
