@@ -8,34 +8,55 @@
             facebookUserID: "",
             onPhotoSelect: function(){},
             onAlbumSelect: function(){}
+            onUserLogin: function(){},
+            onClose: function(){},
+            onUserAuthorizationFailure: function(){},
+            debug: false,
         }, options );
         
+        /* For Debugging */
+        var fbgallery_pluginDebug = function(message) {
+            if(settings.debug) {
+                if(typeof message == "string") {
+                    console.log("FB Gallery: " + message);
+                } else {
+                    console.log(message);
+                }
+            }
+        };
+        
         /* Login User and ask for permission */
-        var facebookLogin = function(){
+        var fbgallery_facebookLogin = function(){
             FB.login(function(response) {
         
                if(response.status === 'connected'){
-                  launchModal();
+                  settings.onUserLogin(response.authResponse.userID);
+                  fbgallery_launchModal();
                   return true;
+               } else {
+                  settings.onUserAuthorizationFailure();
+                  return false;
                }
             
             },{scope:'user_photos'});
         };
         
         /* Function to check if a user is logged in, if not prompt to login */
-        var checkFacebookLoginStatus = function(){
+        var fbgallery_checkFacebookLoginStatus = function(){
             
             var loginStatus = false;
             
             FB.getLoginStatus(function(response) {
+                fbgallery_pluginDebug("Checking login status: " + response);
             
                 if (response.status === 'connected') {
                     settings.facebookUserID = response.authResponse.userID;
                     loginStatus = true;
+                    settings.onUserLogin(response.authResponse.userID);
                 } else if (response.status === 'not_authorized') {
-                    loginStatus = facebookLogin();
+                    loginStatus = fbgallery_facebookLogin();
                 } else {
-                    loginStatus = facebookLogin();
+                    loginStatus = fbgallery_facebookLogin();
                 }
             
             });
@@ -44,7 +65,9 @@
         };
         
         /* What happens when a user clicks on an album */
-        var loadAlbumPictures = function(albumID, albumName){
+        var fbgallery_loadAlbumPictures = function(albumID, albumName){
+            fbgallery_pluginDebug("Loading Album Pictures: ID: " + albumID + " Name: " + albumName);
+            
             $("#jq-fbgallery-container h1").html(albumName + "| Photos");
             
             $("#jq-fbgallery-results-container").fadeOut('fast', function(){
@@ -68,7 +91,8 @@
         };
         
         /* Load up the albums */
-        var loadAlbums = function(){
+        var fbgallery_loadAlbums = function(){
+            fbgallery_pluginDebug("Loading Albums");
             $("#jq-fbgallery-container h1").html(settings.lang_header);
             
             FB.api('/me/albums', function(response) {
@@ -99,13 +123,16 @@
         };
         
         /* Close the Modal window */
-        var closeModal = function(){
+        var fbgallery_closeModal = function(){
+            fbgallery_pluginDebug("Closing");
             $("#jq-fbgallery-overlay").hide();
             $("#jq-fbgallery-container").hide();
         };
         
         /* Setup the CSS */
-        var setCSS = function(){
+        var fbgallery_setCSS = function(){
+            fbgallery_pluginDebug("Setting CSS");
+            
             $("#jq-fbgallery-container").css({
                 zIndex: 3000,
                 display: "block"
@@ -128,29 +155,31 @@
         };
         
         /* Launch the app */
-        var launchModal = function(){
+        var fbgallery_launchModal = function(){
+            fbgallery_pluginDebug("Launching Modal");
+            
             /* Create a container */
             $("body").prepend('<div id="jq-fbgallery-container"><a href="#" id="jq-fbgallery-container-close">&times;</a><h1>' + settings.lang_header + '</h1> <div id="jq-fbgallery-results-container"></div></div><div id="jq-fbgallery-overlay"></div>');
             
             /* Set CSS on the above container */
-            setCSS();
+            fbgallery_setCSS();
             
             /* Close this modal */
             $("#jq-fbgallery-overlay, #jq-fbgallery-container-close").click(function(){
-                closeModal();
+                fbgallery_closeModal();
             });
             
             /* Get a list of facebook albums */
-            loadAlbums();
+            fbgallery_loadAlbums();
         };
         
         /* Only do stuff if the user clicks on then button */
         this.click(function(){
         
-            if(checkFacebookLoginStatus()) {
+            if(fbgallery_checkFacebookLoginStatus()) {
         
                 /* Launch the app */
-                launchModal();
+                fbgallery_launchModal();
                 
                 /* Return false as not to submit the click action */
                 return false;
@@ -160,20 +189,26 @@
         
         $(document)
             .on("click", ".jq-fbgallery-results-album", function(){
+                fbgallery_pluginDebug("Clicked Album");
+            
                 var albumID = $(this).attr("data-album-id");
                 var albumName = $(this).attr("data-album-name");
                 
-                loadAlbumPictures(albumID, albumName);
+                fbgallery_loadAlbumPictures(albumID, albumName);
                 settings.onAlbumSelect(albumID);
                 return false;
             })
             .on("click", "#jq-fbgallery-back", function(){
-                loadAlbums();
+                fbgallery_pluginDebug("Clicked Back Button");
+                
+                fbgallery_loadAlbums();
                 return false;
             })
             .on("click", ".jq-fbgallery-results-photo", function(){
+                fbgallery_pluginDebug("Click a Photo");
+                
                 var photoID = $(this).attr("data-photo-id");
-                closeModal();
+                fbgallery_closeModal();
                 
                 FB.api("/" + photoID, function(response){
                     settings.onPhotoSelect(response);
