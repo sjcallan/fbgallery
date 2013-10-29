@@ -28,14 +28,15 @@ $(".fb-gallery").fbGallery({
 Options:
 --------------------------------------
 
-lang_header: The title of the modal window
+langHeader: The title of the modal window.  Defaults to "Browse Your Albums"
 
 
 Callbacks:
 --------------------------------------
 
-onPhotoSelect: function(){}
-onAlbumSelect: function(){}
+onPhotoSelect: function(response){}
+
+onAlbumSelect: function(response){}
 
     
 Response:
